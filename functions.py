@@ -1,4 +1,6 @@
 import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
 
 def letter_to_int(input_value):
     # If the input is a letter, return its alphabetical number
@@ -38,6 +40,37 @@ def imprimir_resultado(descobertos, usarLetras=False):
         print("Descobertos: ", list(map(int_to_letter, list(map(lambda x: x+1, descobertos)))))
     else:
         print("Descobertos: ", list(map(lambda x: x+1, descobertos)))
+
+def visualizar_grafo(path):
+    file = open(path, "r")
+    num_nodes = int(file.readline().strip())
+    edges = set()
+
+    for linha in file:
+        a, b = linha.split()
+        
+        # Convert to int if they are numbers, otherwise keep as strings
+        a = int(a) if a.isdigit() else a
+        b = int(b) if b.isdigit() else b
+        
+        edges.add((a, b))
+
+    # Close the file
+    file.close()
+
+    G = nx.Graph()
+
+    # Add edges to the graph
+    G.add_edges_from(edges)
+
+    # Use spring layout for better spacing
+    pos = nx.spring_layout(G, k=0.5, iterations=50)  # Adjust 'k' for spacing, increase for more distance
+
+    # Draw the graph with the specified layout
+    plt.figure(figsize=(10, 8))  # Adjust the figure size if needed
+    nx.draw(G, pos, with_labels=True, node_color='lightblue', font_weight='bold', node_size=700, edge_color='gray')
+    plt.title("Graph from File")
+    plt.show()
 
 # Retorna os vizinhos do node na matriz adjacencia. Começa em 0
 def obter_vizinhos(node, matriz_adj):
