@@ -25,13 +25,24 @@ def gerar_matriz_adjacente(path):
 
     # Adiciona as arestas na matriz adjacência
     for linha in file:
-        a, b = linha.split()
-        # Convert to int if they are numbers, otherwise keep as strings
-        a = int(a) if a.isdigit() else letter_to_int(a)
-        b = int(b) if b.isdigit() else letter_to_int(b)
+        edge = linha.split()
+        if len(edge) == 3:
+            a, b, w = edge
+            # Convert to int if they are numbers, otherwise keep as strings
+            a = int(a) if a.isdigit() else letter_to_int(a)
+            b = int(b) if b.isdigit() else letter_to_int(b)
+            w = int(w)
 
-        matriz_adj[a-1][b-1] = 1
-        matriz_adj[b-1][a-1] = 1
+            matriz_adj[a-1][b-1] = w
+            matriz_adj[b-1][a-1] = w
+        else:
+            a, b = edge
+            # Convert to int if they are numbers, otherwise keep as strings
+            a = int(a) if a.isdigit() else letter_to_int(a)
+            b = int(b) if b.isdigit() else letter_to_int(b)
+
+            matriz_adj[a-1][b-1] = 1
+            matriz_adj[b-1][a-1] = 1
 
     return matriz_adj
 
@@ -46,30 +57,44 @@ def visualizar_grafo(path):
     num_nodes = int(file.readline().strip())
     edges = set()
 
+    G = nx.Graph()
+
     for linha in file:
-        a, b = linha.split()
-        
-        # Convert to int if they are numbers, otherwise keep as strings
-        a = int(a) if a.isdigit() else a
-        b = int(b) if b.isdigit() else b
-        
-        edges.add((a, b))
+        edge = linha.split()
+        if len(edge) == 3:
+            a, b, w = edge
+
+            # Convert to int if they are numbers, otherwise keep as strings
+            a = int(a) if a.isdigit() else a
+            b = int(b) if b.isdigit() else b
+            w = float(w)  # Assuming weights can be decimal, convert to float
+
+            # Add the edge with weight to the graph
+            G.add_edge(a, b, weight=w)
+        else:
+            a, b = linha.split()
+            
+            # Convert to int if they are numbers, otherwise keep as strings
+            a = int(a) if a.isdigit() else a
+            b = int(b) if a.isdigit() else b
+            
+            G.add_edge(a, b)  # If no weight, just add the edge without weight
 
     # Close the file
     file.close()
 
-    G = nx.Graph()
-
-    # Add edges to the graph
-    G.add_edges_from(edges)
-
     # Use spring layout for better spacing
-    pos = nx.spring_layout(G, k=0.5, iterations=50)  # Adjust 'k' for spacing, increase for more distance
+    pos = nx.spring_layout(G, k=0.5, iterations=50)  # Adjust 'k' for spacing
 
     # Draw the graph with the specified layout
     plt.figure(figsize=(10, 8))  # Adjust the figure size if needed
     nx.draw(G, pos, with_labels=True, node_color='lightblue', font_weight='bold', node_size=700, edge_color='gray')
-    plt.title("Graph from File")
+
+    # Extract edge weights for labeling
+    edge_labels = nx.get_edge_attributes(G, 'weight')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=edge_labels)
+
+    plt.title("Graph from File with Edge Weights")
     plt.show()
 
 # Retorna os vizinhos do node na matriz adjacencia. Começa em 0
@@ -77,7 +102,7 @@ def obter_vizinhos(node, matriz_adj):
     nodes = []
     # Obtem os vizinhos do nó
     for i in range(len(matriz_adj[node])):
-        if matriz_adj[node][i] == 1:
+        if matriz_adj[node][i] != 0:
             nodes.append(i)
     return nodes
 

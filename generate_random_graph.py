@@ -48,6 +48,6 @@ if num_edges < num_nodes - 1:
 edges = generate_random_edges(num_nodes, num_edges)
 
 # Write edges to a file
-filename = "graph.txt"
+filename = "grafo.txt"
 write_edges_to_file(num_nodes, edges, filename)
 print(f"Edges have been written to {filename}")
