@@ -157,10 +157,11 @@ def obter_vizinhos(node, matriz_adj):
     return nodes
 
 def obter_indice_de_menor_metrica(abertos, metrica):
-    min_value_idx = 0
+    min_value_idx = None
     for i in range(len(abertos)):
-        if metrica[abertos[i]] < metrica[abertos[min_value_idx]]:
-            min_value_idx = i
+        if abertos[i] in metrica:
+            if min_value_idx == None or metrica[abertos[i]] < metrica[abertos[min_value_idx]]:
+                min_value_idx = i
     return min_value_idx
 
 # Retorna se um dado vertice é conexo ao grafo
