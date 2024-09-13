@@ -123,29 +123,32 @@ def hierarchy_pos(G, root=None, width=1., vert_gap=0.2, vert_loc=0, xcenter=0.5)
             pos.update(hierarchy_pos(G, root=neighbor, width=dx, vert_gap=vert_gap, vert_loc=vert_loc-vert_gap, xcenter=nextx))
     return pos
 
-def visualizar_arvore_de_pais(pais, usarLetras=False):
+def visualizar_arvore_de_pais(pais, usarLetras=False, titulo="Hierarchical Parent-Child Tree"):
 
-    G = nx.DiGraph()  # Use directed graph to preserve parent-child hierarchy
+    if len(list(pais.keys())) != 0:
+        G = nx.DiGraph()  # Use directed graph to preserve parent-child hierarchy
 
-    # Create edges for each child-parent relationship
-    for filho in pais.keys():
-        if usarLetras == True:
-            G.add_edge(int_to_letter(pais[filho]), int_to_letter(filho))
-        else:
-             G.add_edge(pais[filho], filho)
+        # Create edges for each child-parent relationship
+        for filho in pais.keys():
+            if usarLetras == True:
+                G.add_edge(int_to_letter(pais[filho]), int_to_letter(filho))
+            else:
+                G.add_edge(pais[filho], filho)
 
-    # Find the root (the node with no parent)
-    root = [node for node in G.nodes if node not in pais.keys()][0]
+        # Find the root (the node with no parent)
+        root = [node for node in G.nodes if node not in pais.keys()][0]
 
-    # Get the hierarchical position layout
-    pos = hierarchy_pos(G, root)
+        # Get the hierarchical position layout
+        pos = hierarchy_pos(G, root)
 
-    # Draw the graph with the specified layout
-    plt.figure(figsize=(10, 8))  # Adjust the figure size if needed
-    nx.draw(G, pos, with_labels=True, node_color='lightblue', font_weight='bold', node_size=700, edge_color='gray')
+        # Draw the graph with the specified layout
+        plt.figure(figsize=(10, 8))  # Adjust the figure size if needed
+        nx.draw(G, pos, with_labels=True, node_color='lightblue', font_weight='bold', node_size=700, edge_color='gray')
 
-    plt.title("Hierarchical Parent-Child Tree")
-    plt.show()
+        plt.title(titulo)
+        plt.show()
+    else:
+        print("Cannot display tree with no edges.")
 
 # Retorna os vizinhos do node na matriz adjacencia. Começa em 0
 def obter_vizinhos(node, matriz_adj):
