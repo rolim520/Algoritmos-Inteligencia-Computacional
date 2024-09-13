@@ -48,9 +48,9 @@ def gerar_matriz_adjacente(path):
 
 def imprimir_resultado(descobertos, usarLetras=False):
     if usarLetras:
-        print("Descobertos: ", list(map(int_to_letter, descobertos)))
+        print("Ordem de descoberta: ", list(map(int_to_letter, descobertos)))
     else:
-        print("Descobertos: ", descobertos)
+        print("Ordem de descoberta: ", descobertos)
 
 def visualizar_grafo(path):
     file = open(path, "r")
@@ -156,12 +156,12 @@ def obter_vizinhos(node, matriz_adj):
             nodes.append(i)
     return nodes
 
-def obter_indice_menor_distancia(abertos, distancia):
-    min_dist_idx = 0
+def obter_indice_de_menor_metrica(abertos, metrica):
+    min_value_idx = 0
     for i in range(len(abertos)):
-        if distancia[abertos[i]] < distancia[abertos[min_dist_idx]]:
-            min_dist_idx = i
-    return min_dist_idx
+        if metrica[abertos[i]] < metrica[abertos[min_value_idx]]:
+            min_value_idx = i
+    return min_value_idx
 
 # Retorna se um dado vertice é conexo ao grafo
 def conexo_ao_grafo(node, matriz_adj):
@@ -187,6 +187,6 @@ def gerar_heuristicas(path):
         v, h = linha.split()
         v = int(v) if v.isdigit() else letter_to_int(v)
         h = int(h)
-        heuristicas[v] = h
+        heuristicas[v-1] = h
         
     return heuristicas
