@@ -48,9 +48,9 @@ def gerar_matriz_adjacente(path):
 
 def imprimir_resultado(descobertos, usarLetras=False):
     if usarLetras:
-        print("Descobertos: ", list(map(int_to_letter, list(map(lambda x: x+1, descobertos)))))
+        print("Descobertos: ", list(map(int_to_letter, descobertos)))
     else:
-        print("Descobertos: ", list(map(lambda x: x+1, descobertos)))
+        print("Descobertos: ", descobertos)
 
 def visualizar_grafo(path):
     file = open(path, "r")
@@ -123,12 +123,16 @@ def hierarchy_pos(G, root=None, width=1., vert_gap=0.2, vert_loc=0, xcenter=0.5)
             pos.update(hierarchy_pos(G, root=neighbor, width=dx, vert_gap=vert_gap, vert_loc=vert_loc-vert_gap, xcenter=nextx))
     return pos
 
-def visualizar_arvore_de_pais(matriz_adj, pais):
+def visualizar_arvore_de_pais(pais, usarLetras=False):
+
     G = nx.DiGraph()  # Use directed graph to preserve parent-child hierarchy
 
     # Create edges for each child-parent relationship
     for filho in pais.keys():
-        G.add_edge(pais[filho], filho, weight=matriz_adj[letter_to_int(pais[filho])-1][letter_to_int(filho)-1])
+        if usarLetras == True:
+            G.add_edge(int_to_letter(pais[filho]), int_to_letter(filho))
+        else:
+             G.add_edge(pais[filho], filho)
 
     # Find the root (the node with no parent)
     root = [node for node in G.nodes if node not in pais.keys()][0]
@@ -165,3 +169,24 @@ def conexo_ao_grafo(node, matriz_adj):
         if matriz_adj[node][i] != 0:
             return True
     return False
+
+def incrementar(item):
+    if isinstance(item, list):
+        return list(map(lambda x: x+1, item))
+    elif isinstance(item, dict):
+        dict_incrementado = dict()
+        for key in item.keys():
+            dict_incrementado[key+1] = item[key]+1
+        return dict_incrementado
+    
+def gerar_heuristicas(path):
+    file = open(path, "r")
+    heuristicas = dict()
+
+    for linha in file:
+        v, h = linha.split()
+        v = int(v) if v.isdigit() else letter_to_int(v)
+        h = int(h)
+        heuristicas[v] = h
+        
+    return heuristicas
